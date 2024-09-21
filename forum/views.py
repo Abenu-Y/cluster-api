@@ -1,13 +1,17 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 
+from rest_framework.permissions import IsAuthenticated
 
+from django.contrib.auth import authenticate
+import jwt
+from django.conf import settings
 
 @api_view(['POST'])
 def registerUser(request):
@@ -45,14 +49,46 @@ def loginUser(request):
     data = request.data
     try:
         user = User.objects.get(username=data['username'])  # Get the user by username
-        print(user , check_password(data['password'],user.password))
+        print(user)
         if check_password(data['password'], user.password):  # Check if password matches
-            refresh = RefreshToken.for_user(user)  # Generate tokens
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)  # Generate access token
+
             return Response({
+                'msg': 'User successfully logged in',
                 'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            })
+                'token': access_token,
+                'username': user.username  # Include username in the response
+            }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     except User.DoesNotExist:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # data = request.data
+    # user = authenticate(username=data['username'], password=data['password'])
+    # print(user.username, user.userid)
+
+    # if user is not None:
+    #     # Create token
+    #     token = jwt.encode(
+    #         {'username': user.username, 'user_id': user.userid},
+    #         settings.SECRET_KEY,
+    #         algorithm='HS256'
+    #     )
+    #     return Response({'msg': 'User successfully logged in', 'token': token, 'username': user.username}, status=status.HTTP_200_OK)
+    # else:
+    #     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def question(request):
+    return Response({"msg":"Abenezer"})
+
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def checkUser(request):
+    return Response({"message": f"Hello, {request.user.username}!"})

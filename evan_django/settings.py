@@ -11,11 +11,13 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'abenezer_y')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -25,7 +27,7 @@ SECRET_KEY = "django-insecure-75sm3gifk#8xtjjg6iblx+#ld%eay7qkdk(hn4bgc8x)@4w8h(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 from rest_framework_simplejwt.settings import api_settings
-DEBUG = False  # or True for development
+DEBUG = True  # or True for development
 
 ALLOWED_HOSTS = ['*']  # Set appropriate hosts
 
@@ -56,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "forum.middleware.JWTAuthMiddleware"
 ]
 
 ROOT_URLCONF = "evan_django.urls"
