@@ -97,10 +97,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'evan',
-        'USER': 'abenezer',
-        'PASSWORD': 'abenezer',
+        'USER': 'abenezery',
+        'PASSWORD': 'abenezery',
         'HOST': 'localhost',
         'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 

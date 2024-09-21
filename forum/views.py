@@ -91,4 +91,4 @@ def question(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def checkUser(request):
-    return Response({"message": f"Hello, {request.user.username}!"})
+    return Response({"message": f"Hello, {request.user.username}!","username":request.user.username, "email":request.user.email})
